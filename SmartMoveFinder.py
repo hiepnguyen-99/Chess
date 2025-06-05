@@ -1,13 +1,13 @@
+# Nguyễn Phương Đông
+
 import random
-from ChessEngine import Move
 import Evalute
 
-pieceScore = {"K": 0, "Q": 10, "R": 5, "B": 3, "N": 3, "p": 1}
+pieceScore = {"K": 100, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = Evalute.CHECKMATE
 STALEMATE = Evalute.STALEMATE # >0 => white win : <0 black win
 DEPTH = 4
 global nextMove
-
 
 def findRandomMove(validMoves):
     return validMoves[random.randint(0, len(validMoves)-1)]

@@ -1,5 +1,4 @@
-# Tên: Nguyễn Xuân Hiệp
-# Mã sv: 22022591
+# Nguyễn Xuân Hiệp
 
 import pygame as p
 import ChessEngine, SmartMoveFinder, Evalute
@@ -79,7 +78,7 @@ def main():
         },
         {
             'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 75, 200, 50),
-            'text': 'White',
+            'text': 'Black',
             'textColor': 'white',
             'textColorDown': 'black',
             'buttonColor': 'black',
@@ -89,7 +88,7 @@ def main():
         },
         {
             'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 25, 200, 50),
-            'text': 'Black',
+            'text': 'White',
             'textColor': 'black',
             'textColorDown': 'white',
             'buttonColor': 'white',
@@ -118,7 +117,7 @@ def main():
             button = buttons[i]
             drawButton(screen, button['rect'], button['text'], button['textColor'], button['buttonColor'], button['borderColor'])
         
-        # Thay đổi nút khi nút được nhất (buttonPressed) không rỗng
+        # Thay đổi nút khi nút được nhất (buttonPressed)
         if buttonPressed is not None:
             drawButtonDown(screen, buttonPressed['rect'], buttonPressed['text'], buttonPressed['textColorDown'], buttonPressed['buttonColorDown'], buttonPressed['borderColor'])
         

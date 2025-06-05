@@ -1,5 +1,5 @@
 # Bài tập lớn học phần Cơ sở Trí tuệ nhân tạo
-## Trò chơi cờ vua Chess
+## Chess
 
 Thành viên: 
 - Nguyễn Xuân Hiệp - 22022591
