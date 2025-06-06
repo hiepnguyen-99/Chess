@@ -1,7 +1,9 @@
 # Nguyễn Xuân Hiệp
 
 import pygame as p
-import ChessEngine, SmartMoveFinder, Evalute
+import ChessEngine
+from Minimax import SmartMoveFinder
+from Minimax import Evaluate
 
 WIDTH = HEIGHT = 512  # Kích thước cửa sổ
 DIMENSION = 8  # Kích thước bảng cờ vua 8x8 ô
@@ -84,7 +86,7 @@ def main():
             'buttonColor': 'black',
             'buttonColorDown': 'white',
             'borderColor': 'white',
-            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+            'action': {'playerOne': False, 'playerTwo': True, 'running': True, 'onePlayer': False, 'choosePlayer': False}
         },
         {
             'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 25, 200, 50),
@@ -94,7 +96,7 @@ def main():
             'buttonColor': 'white',
             'buttonColorDown': 'black',
             'borderColor': 'black',
-            'action': {'playerOne': False, 'playerTwo': True, 'running': True, 'onePlayer': False,
+            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False,
                        'choosePlayer': False}
         }
     ]
@@ -225,7 +227,7 @@ def main():
                     gameOver = False
 
         if not gameOver and not humanTurn:
-            if Evalute.check_mid_game(gs):
+            if Evaluate.check_mid_game(gs):
                 SmartMoveFinder.DEPTH = 4
             else:
                 SmartMoveFinder.DEPTH = 3

@@ -1,10 +1,10 @@
 # Nguyễn Phương Đông
 
-CHECKMATE = 999999999999999999
-STALEMATE = 0
+CHECKMATE = 100000000
+STALEMATE = 10000
 
 piece_value = {
-    "K": 9000000, "Q": 9000, "R": 5000, "B": 3000, "N": 3000, "p": 1000
+    "K": 100000000, "Q": 9000, "R": 5000, "B": 3000, "N": 3000, "p": 1000
 }
 
 pawnEvalWhite = [

@@ -13,7 +13,7 @@ class GameState():
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
                             "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
-        self.whiteToMove = True #Lượt đi của trắng
+        self.whiteToMove = False #Lượt đi của trắng
         self.moveLog = [] #Lịch sử nước đi
         self.whiteKingLocation = (7,4) #Vị trí vua trắng
         self.blackKingLocation = (0,4) #Vị trí vua đen
@@ -138,7 +138,7 @@ class GameState():
 
     # Trả về danh sách các nước đi hợp lệ cho người chơi hiện tại.
     # Kiểm tra xem người chơi có đang bị chiếu không và xem có nước đi nào để thoát khỏi chiếu không.
-    # Kiểm tra xem trò chơi có đang ở trong tình trạng chiếu mạng (checkmate) hay hòa (stalemate) không.
+    # Kiểm tra xem trò chơi có đang ở trong tình trạng chiếu hết (checkmate) hay hòa (stalemate) không.
     def getValidMoves(self):
         moves = []
         self.inCheck, self.pins, self.checks = self.checkForPinsAndChecks()

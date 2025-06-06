@@ -1,11 +1,10 @@
 # Nguyễn Phương Đông
 
 import random
-import Evalute
+from Minimax import Evaluate
 
-pieceScore = {"K": 100, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
-CHECKMATE = Evalute.CHECKMATE
-STALEMATE = Evalute.STALEMATE # >0 => white win : <0 black win
+CHECKMATE = Evaluate.CHECKMATE
+STALEMATE = Evaluate.STALEMATE # >0 => white win : <0 black win
 DEPTH = 4
 global nextMove
 
@@ -22,7 +21,7 @@ def findBestMinimaxMove(gs, validMoves):
 def findMiniMaxScore(gs, validMoves, depth, alpha, beta, turnMutiplayer):
     global nextMove
     if depth == 0:
-        return Evalute.evaluate_board(gs)
+        return Evaluate.evaluate_board(gs)
     if turnMutiplayer:
         maxScore = -CHECKMATE
         for move in validMoves:
