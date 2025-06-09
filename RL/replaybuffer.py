@@ -1,14 +1,14 @@
 import random
 from collections import deque, namedtuple
 
-Transision = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
+Transision = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done', 'mask'))
 
 class ReplayBuffer():
     def __init__(self, capacity): # int capacity
         self.buffer = deque(maxlen=capacity)
 
-    def push(self, state, action, reward, new_state, done):
-        self.buffer.append(Transision(state, action, reward, new_state, done))
+    def push(self, state, action, reward, new_state, done, mask):
+        self.buffer.append(Transision(state, action, reward, new_state, done, mask))
 
     def sample(self, batch_size):
         return random.sample(self.buffer, batch_size)

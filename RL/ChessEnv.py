@@ -25,7 +25,6 @@ class Env():
         
     def reset(self):
         self.gs = copy.deepcopy(self.__initial__gs)
-        return self.state_to_tensor()
     
     def all_moves(self):
         return sorted(
@@ -38,24 +37,27 @@ class Env():
         )
     
     def legal_moves_mask(self):
-        mask = torch.zeros(self.action_size, dtype=torch.bool)
+        legal_mask = torch.zeros(self.action_size, dtype=torch.bool)
         for m in self.gs.getValidMoves():
             mid = m.moveID
             if mid in self.moveid_to_index:
-                mask[self.moveid_to_index[mid]] = True
-        return mask
+                legal_mask[self.moveid_to_index[mid]] = True
+        return legal_mask
 
-    def step(self, action): # action đầu vào là index cả moveid
-        idx = self.moveid_to_index[action.moveID]
-        mask = self.legal_moves_mask()
-        print(mask[idx])
-        if mask[idx]: 
+    def step(self, index): # đầu vào là chỉ số nước đi
+        legal_mask = self.legal_moves_mask()
+        print(f'chessenv step: legal_mask[{index} = {legal_mask[index]}]')
+        if legal_mask[index]:
+            moveid = self.index_to_moveid[index]
+            s = str(moveid).zfill(4)
+            sr, sc, er, ec = (int(c) for c in s)
+            action = ChessEngine.Move((sr, sc), (er, ec), self.gs.board)
             self.gs.makeMove(action)
             r = computereward.Reward(self.gs, action)
             done = self.gs.checkMate or self.gs.staleMate
-            return self.state_to_tensor, r.get_reward(), done
+            return self.state_to_tensor(), r.get_reward(), done, legal_mask
         else:
-            return self.state_to_tensor, -10, True
+            return self.state_to_tensor(), -10, True, legal_mask
 
     def state_to_tensor(self):
         mapping = ["wp","wN","wB","wR","wQ","wK","bp","bN","bB","bR","bQ","bK"] 
