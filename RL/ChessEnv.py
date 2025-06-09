@@ -46,7 +46,6 @@ class Env():
 
     def step(self, index): # đầu vào là chỉ số nước đi
         legal_mask = self.legal_moves_mask()
-        print(f'chessenv step: legal_mask[{index} = {legal_mask[index]}]')
         if legal_mask[index]:
             moveid = self.index_to_moveid[index]
             s = str(moveid).zfill(4)
@@ -59,7 +58,7 @@ class Env():
         else:
             return self.state_to_tensor(), -10, True, legal_mask
 
-    def state_to_tensor(self):
+    def state_to_tensor(self): # từ bàn cờ chuyển thành đầu vào cho DQN
         mapping = ["wp","wN","wB","wR","wQ","wK","bp","bN","bB","bR","bQ","bK"] 
         planes = torch.zeros((12, 8, 8), dtype=torch.float32)
         
@@ -71,5 +70,4 @@ class Env():
 
         # side to move
         stm = torch.full((1, 8, 8), float(self.gs.whiteToMove), dtype=torch.float32)
-        
         return torch.cat([planes, stm], dim=0) # (13,8,8)
