@@ -7,13 +7,13 @@ class GameState():
     def __init__(self):
         self.board = [
             ["bR","bN","bB","bQ","bK","bB","bN","bR"],
-            ["bp","bp","bp","bp","bp","--","--","bp"],
+            ["bp","bp","bp","bp","bp","bp","bp","bp"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
-            ["--","wp","wp","wp","--","--","--","--"],
-            ["wR","wN","wB","wQ","wK","wB","wR","wR"]]
+            ["wp","wp","wp","wp","wp","wp","wp","wp"],
+            ["wR","wN","wB","wQ","wK","wB","wN","wR"]]
             
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N":self.getKnightMoves,
                             "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
@@ -65,12 +65,10 @@ class GameState():
             self.countPiece['p'] -= 1
         
         # Tốt phong hàm
-        if move.pawnPromotion:
+        if move.pawnPromotion and move.promotedPiece is not None:
             self.board[move.endRow][move.endCol] = move.promotedPiece
-            if move.promotedPiece is not None:
-                self.board[move.endRow][move.endCol] = move.promotedPiece
-                self.countPiece[move.promotedPiece[1]] += 1
-                self.countPiece['p'] -= 1
+            self.countPiece[move.promotedPiece[1]] += 1
+            self.countPiece['p'] -= 1
         
         # Xử lý nhập thành
         if move.castle:
@@ -586,8 +584,7 @@ class Move():
         self.endCol = endSq[1]
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
-        if self.pieceMoved is not None:
-            self.pawnPromotion = self.pieceMoved[1] == 'p' and (self.endRow == 0 or self.endRow == 7) 
+        self.pawnPromotion = self.pieceMoved[1] == 'p' and (self.endRow == 0 or self.endRow == 7) 
         self.enPassant = enPassant
         self.castle = castle
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol

@@ -44,15 +44,16 @@ class Env():
                 legal_mask[self.moveid_to_index[mid]] = True
         return legal_mask
 
-    def step(self, index): # đầu vào là chỉ số nước đi
+    def step(self, index, captured=None): # đầu vào là chỉ số nước đi và nước trắng đi có ăn quân hay ko
         legal_mask = self.legal_moves_mask()
         if legal_mask[index]:
             moveid = self.index_to_moveid[index]
             s = str(moveid).zfill(4)
             sr, sc, er, ec = (int(c) for c in s)
             action = ChessEngine.Move((sr, sc), (er, ec), self.gs.board)
+            r = computereward.Reward(self.gs, action, captured)
             self.gs.makeMove(action)
-            r = computereward.Reward(self.gs, action)
+
             done = self.gs.checkMate or self.gs.staleMate
             return self.state_to_tensor(), r.get_reward(), done, legal_mask
         else:
