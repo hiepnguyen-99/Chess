@@ -1,6 +1,6 @@
 import copy
 piece_value = {
-    "K": 0, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1
+    "K": 10, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1
 }
 
 class Reward():
