@@ -83,17 +83,17 @@ def main():
         {
             'rect': p.Rect(WIDTH / 2 - 300 / 2, HEIGHT / 2 - 75, 300, 50),
             'text': 'Play with Minimax',
-            'textColor': 'white',
-            'textColorDown': 'black',
-            'buttonColor': 'black',
-            'buttonColorDown': 'white',
-            'borderColor': 'white',
+            'textColor': 'black',
+            'textColorDown': 'white',
+            'buttonColor': 'white',
+            'buttonColorDown': 'black',
+            'borderColor': 'black',
             'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False, 
                        'choosePlayer': False, 'Minimax': True, 'DQN': False}
         },
         {
             'rect': p.Rect(WIDTH / 2 - 300 / 2, HEIGHT / 2 + 25, 300, 50),
-            'text': 'Play with DQN',
+            'text': 'Play with RL',
             'textColor': 'black',
             'textColorDown': 'white',
             'buttonColor': 'white',
