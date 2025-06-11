@@ -1,21 +1,64 @@
-# Bài tập lớn học phần Cơ sở Trí tuệ nhân tạo
-## Chess
-
-Thành viên: 
+# Chess
+**Members**: 
 - Nguyễn Xuân Hiệp - 22022591
 - Phó Viết Tiến Anh - 22022568
 - Nguyễn Phương Đông - 22022593
-## Hướng dẫn chạy ứng dụng
 
-Để chạy ứng dụng Chess, bạn cần thực hiện các bước sau:
+University of Engineering and Technology (UET-VNU)
 
-1. **Cài đặt Python và các thư viện cần thiết**: Đảm bảo bạn đã cài đặt Python trên máy tính của mình. Nếu chưa, bạn có thể tải Python từ [trang chính thức của Python](https://www.python.org/). Sau đó cài đặt các thư viện cần thiết bằng cách sử dụng Terminal và nhập câu lệnh theo cú pháp: ``` pip install _tên thư viện_ ```.
-2. **Chạy ứng dụng**: Sau khi cài đặt các thư viện, mở terminal và điều hướng đến thư mục chứa file `ChessMain.py`, sau đó chạy lệnh :
+## Introduction
+This project builts a chess game integrating Minimax algorithm and Deep Q-Network of Reinforcement Learning model
+
+## Features
+1. **User Interface**:
+    - Simple 2D graphics use Pygame platform.
+    - Displays moved piece and board state.
+
+2. **Minimax Alpha-Beta Pruning**:
+    - Configurable search depth.
+    - Evaluation function based on material count, piece positioning, and king safety.
+
+3. **Deep Q-Network (DQN)**:
+    - Custom chess environment.
+    - Input: one-hot encoded board state matrix.
+    - Multi-layer perceptron (MLP) estimate Q-values for each legal move.
+    - Replay buffer, epsilon-greedy strategy, and periodic target network updates.
+
+4. **Training mode**:
+    - RL is played against Minimax.
+    - Periodic model checkpoint saving.
+    - Tracking `q_value max`, `q_target max`, `rewards`
+
+## Project Structure
+```
+Chess/
+├── images/                 # Images of pieces
+├── Minimax/                # Minimax Alpha-Beta Prunning
+│   ├── Evaluate.py
+│   ├── SmartMoveFinder.py
+├── RL/                     # Reinforcement Learning
+│   ├── ChessEnv.py         # Chess Environment
+│   ├── computereward.py    # Reward
+│   ├── DQN.pth             # Parameter
+│   ├── network.py          # Deep Q-Network
+│   ├── replaybuffer.py     # Moved history
+│   ├── Move.py             
+│   └── train.py            # Train DQN model
+├── ChessEngine.py          # Logic game
+├── ChessMain.py            # Main file to run project
+├── README.md
+└── requirements.txt
+```
+
+## Usage
+1. Clone repository to your local
+
+2. Install the required libraries:
+```bash
+pip install -r requirements.txt
+```
+
+3. Run project and play Chess
 ```
 python ChessMain.py
 ```
-***Ví dụ: Trong trường hợp thư mục chứa ChessMain.py là D:\Chess:*** 
-Mở Terminal và chạy câu lệnh sau : ```cd D:\Chess; python ChessMain.py```
-
-"# Chess" 
-"# Chess" 
