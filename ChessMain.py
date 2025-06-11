@@ -4,6 +4,7 @@ import pygame as p
 import ChessEngine
 from Minimax import SmartMoveFinder
 from Minimax import Evaluate
+import RL.Move
 
 WIDTH = HEIGHT = 512  # Kích thước cửa sổ
 DIMENSION = 8  # Kích thước bảng cờ vua 8x8 ô
@@ -16,7 +17,8 @@ playerTwo = False
 running = False
 onePlayer = False
 choosePlayer = True
-
+Minimax = False
+DQN = False
 
 # Khởi tạo từ điển của các ảnh
 def loadImages():
@@ -27,7 +29,7 @@ def loadImages():
 
 # Xử lý dữ liệu đầu vào của người dùng và cập nhật đồ họa
 def main():
-    global playerOne, playerTwo, running, onePlayer, choosePlayer
+    global playerOne, playerTwo, running, onePlayer, choosePlayer, Minimax, DQN
     p.init()  # Tạo môi trường để sd chức năng của Pygame
     screen = p.display.set_mode((WIDTH, HEIGHT))  # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
@@ -79,25 +81,26 @@ def main():
             'action': {'playerOne': True, 'playerTwo': True, 'running': True, 'onePlayer': False, 'choosePlayer': False}
         },
         {
-            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 75, 200, 50),
-            'text': 'Black',
+            'rect': p.Rect(WIDTH / 2 - 300 / 2, HEIGHT / 2 - 75, 300, 50),
+            'text': 'Play with Minimax',
             'textColor': 'white',
             'textColorDown': 'black',
             'buttonColor': 'black',
             'buttonColorDown': 'white',
             'borderColor': 'white',
-            'action': {'playerOne': False, 'playerTwo': True, 'running': True, 'onePlayer': False, 'choosePlayer': False}
+            'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False, 
+                       'choosePlayer': False, 'Minimax': True, 'DQN': False}
         },
         {
-            'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 + 25, 200, 50),
-            'text': 'White',
+            'rect': p.Rect(WIDTH / 2 - 300 / 2, HEIGHT / 2 + 25, 300, 50),
+            'text': 'Play with DQN',
             'textColor': 'black',
             'textColorDown': 'white',
             'buttonColor': 'white',
             'buttonColorDown': 'black',
             'borderColor': 'black',
             'action': {'playerOne': True, 'playerTwo': False, 'running': True, 'onePlayer': False,
-                       'choosePlayer': False}
+                       'choosePlayer': False, 'Minimax': False, 'DQN': True}
         }
     ]
 
@@ -227,13 +230,19 @@ def main():
                     gameOver = False
 
         if not gameOver and not humanTurn:
-            if Evaluate.check_mid_game(gs):
-                SmartMoveFinder.DEPTH = 4
-            else:
-                SmartMoveFinder.DEPTH = 3
-            AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
-            if AIMove is None:
-                AIMove = SmartMoveFinder.findRandomMove(validMoves)
+            AIMove = None
+            if Minimax:
+                if Evaluate.check_mid_game(gs):
+                    SmartMoveFinder.DEPTH = 4
+                else:
+                    SmartMoveFinder.DEPTH = 3
+                AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
+                if AIMove is None:
+                    AIMove = SmartMoveFinder.findRandomMove(validMoves)
+
+            if DQN:
+                AIMove = RL.Move.BestRLMove(gs)
+            
             gs.makeMove(AIMove)
             moveMade = True
             animate = True
