@@ -58,7 +58,7 @@ def main():
             'buttonColorDown': '#006400',
             'borderColor': 'black',  # Màu viền ô
             'action': {'playerOne': False, 'playerTwo': False, 'running': True, 'onePlayer': False,
-                       'choosePlayer': False}
+                       'choosePlayer': False, 'Minimax': True, 'DQN': True}
         },
         {
             'rect': p.Rect(WIDTH / 2 - 200 / 2, HEIGHT / 2 - 25, 200, 50),
@@ -231,7 +231,17 @@ def main():
 
         if not gameOver and not humanTurn:
             AIMove = None
-            if Minimax:
+            AIplay = Minimax and DQN
+            if AIplay:
+                if gs.whiteToMove and Minimax:            
+                    if Evaluate.check_mid_game(gs):
+                        SmartMoveFinder.DEPTH = 4
+                    else:
+                        SmartMoveFinder.DEPTH = 3
+                    AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
+                    if AIMove is None:
+                        AIMove = SmartMoveFinder.findRandomMove(validMoves)
+            else:
                 if Evaluate.check_mid_game(gs):
                     SmartMoveFinder.DEPTH = 4
                 else:
@@ -240,12 +250,12 @@ def main():
                 if AIMove is None:
                     AIMove = SmartMoveFinder.findRandomMove(validMoves)
 
-            if DQN:
+            if not gs.whiteToMove and DQN:
                 AIMove = RL.Move.BestRLMove(gs)
-            
+
             gs.makeMove(AIMove)
             moveMade = True
-            animate = True
+            animate = True            
 
         if moveMade:
             if animate:
