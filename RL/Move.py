@@ -12,7 +12,7 @@ importlib.reload(network)
 # khởi tạo môi trường và mô hình
 env = ChessEnv.Env()
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
 # device = torch.device('cpu')
 
 print(f'device {device}')
