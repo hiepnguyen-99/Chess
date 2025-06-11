@@ -1,7 +1,7 @@
 import importlib
-import ChessEnv
+from . import ChessEnv
 import ChessEngine
-import network
+from . import network
 import torch
 import os
 
@@ -12,14 +12,14 @@ importlib.reload(network)
 # khởi tạo môi trường và mô hình
 env = ChessEnv.Env()
 
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cpu')
 
 print(f'device {device}')
 
 print(f'env.action_size {env.action_size}')
 q_net = network.DQN(env.action_size).to(device)
-model_path = 'DQN.pth'
+model_path = os.path.join(os.path.dirname(__file__), 'DQN.pth')
 if os.path.exists(model_path):
     checkpoint = torch.load(model_path, map_location=device)
     q_net.load_state_dict(checkpoint)
