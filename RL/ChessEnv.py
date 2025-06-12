@@ -60,11 +60,11 @@ class Env():
 
         # hết nước đi hợp lệ 
         # loss
-        if lenlegalmove == 0 and self.gs.checkMate:
+        if self.gs.checkMate:
             print(f'hết nước đi hợp lệ, self.gs.checkMate, -1' )
             return state, -1, True, before_legal_mask, before_legal_mask
         # draw
-        if lenlegalmove == 0 and self.gs.staleMate:
+        elif self.gs.staleMate:
             print(f'hết nước đi hợp lệ, self.gs.staleMate, 0' )
             return state, 0, True, before_legal_mask, before_legal_mask
 
@@ -76,15 +76,14 @@ class Env():
             action = ChessEngine.Move((sr, sc), (er, ec), self.gs.board)
             r = computereward.Reward(self.gs, action, white_capture).get_reward()
             self.gs.makeMove(action)
-            done = self.gs.checkMate or self.gs.staleMate
 
             # win
-            if done and self.gs.checkMate:
-                print(f'done = self.gs.checkMate or self.gs.staleMate {done}, reward 1')
+            if self.gs.checkMate:
+                print(f'done = self.gs.checkMate or self.gs.checkMate {True}, reward 1')
                 return state, 1, True, before_legal_mask, before_legal_mask
             # draw
-            elif done and self.gs.staleMate:
-                print(f'done = self.gs.checkMate or self.gs.staleMate {done}, reward 0')
+            elif self.gs.staleMate:
+                print(f'done = self.gs.checkMate or self.gs.staleMate {True}, reward 0')
                 return state, 0, True, before_legal_mask, before_legal_mask
             else:
                 # trắng đi
