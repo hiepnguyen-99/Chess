@@ -87,7 +87,7 @@ class GameState():
         self.castleRightsLog.append(CastleRights(self.currentCastlingRight.wks, self.currentCastlingRight.bks, 
                                              self.currentCastlingRight.wqs, self.currentCastlingRight.bqs))
         
-        if move.pieceCaptured == '--' and move.pieceMoved[1] != 'p' and move.pieceMoved[0] == 'w':
+        if move.pieceCaptured == '--':
             self.noCapturedMoves += 1
         else:
             self.noCapturedMoves = 0
