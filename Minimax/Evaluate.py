@@ -1,7 +1,7 @@
 # Nguyễn Phương Đông
 
 CHECKMATE = 10000000000
-STALEMATE = 0
+STALEMATE = -10000000000
 
 piece_value = {
     "K": 10000, "Q": 9000, "R": 5000, "B": 3000, "N": 3000, "p": 1000
