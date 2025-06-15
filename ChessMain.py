@@ -4,6 +4,7 @@ import pygame as p
 import ChessEngine
 from Minimax import SmartMoveFinder
 from Minimax import Evaluate
+import random
 import RL.Move
 
 WIDTH = HEIGHT = 512  # Kích thước cửa sổ
@@ -233,14 +234,18 @@ def main():
             AIMove = None
             AIplay = Minimax and DQN
             if AIplay:
-                if gs.whiteToMove and Minimax:            
-                    if Evaluate.check_mid_game(gs):
-                        SmartMoveFinder.DEPTH = 4
+                if gs.whiteToMove and Minimax:
+                    # trộn nước đi giữa minimax và dqn            
+                    if random.random() <= 0.5:
+                        if Evaluate.check_mid_game(gs):
+                            SmartMoveFinder.DEPTH = 4
+                        else:
+                            SmartMoveFinder.DEPTH = 3
+                        AIMove = SmartMoveFinder.findBestMinimaxMove(gs, gs.getValidMoves())
+                        if AIMove is None:
+                            AIMove = SmartMoveFinder.findRandomMove(gs.getValidMoves())
                     else:
-                        SmartMoveFinder.DEPTH = 3
-                    AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
-                    if AIMove is None:
-                        AIMove = SmartMoveFinder.findRandomMove(validMoves)
+                        AIMove = RL.Move.BestRLMove(gs)
             else:
                 if Evaluate.check_mid_game(gs):
                     SmartMoveFinder.DEPTH = 4

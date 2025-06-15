@@ -65,8 +65,8 @@ class Env():
             return state, -1, True, before_legal_mask, before_legal_mask
         # draw
         elif self.gs.staleMate:
-            print(f'hết nước đi hợp lệ, self.gs.staleMate, 0' )
-            return state, 0, True, before_legal_mask, before_legal_mask
+            print(f'hết nước đi hợp lệ, self.gs.staleMate, -0.5' )
+            return state, -0.5, True, before_legal_mask, before_legal_mask
 
         # print(f'legal_mask[{index}] {legal_mask[index]}')
         if before_legal_mask[index]:
@@ -83,8 +83,8 @@ class Env():
                 return state, 1, True, before_legal_mask, before_legal_mask
             # draw
             elif self.gs.staleMate:
-                print(f'done = self.gs.checkMate or self.gs.staleMate {True}, reward 0')
-                return state, 0, True, before_legal_mask, before_legal_mask
+                print(f'done = self.gs.checkMate or self.gs.staleMate {True}, reward -0.5')
+                return state, -0.5, True, before_legal_mask, before_legal_mask
             else:
                 # trắng đi
                 if Evaluate.check_mid_game(self.gs):
