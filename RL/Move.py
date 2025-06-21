@@ -15,7 +15,6 @@ device = torch.device('cpu')
 
 print(f'device {device}')
 
-print(f'env.action_size {env.action_size}')
 q_net = DQN(env.action_size).to(device)
 model_path = os.path.join(os.path.dirname(__file__), 'DQN.pth')
 if os.path.exists(model_path):
@@ -64,4 +63,8 @@ def BestRLMove(gs):
     best_action_mid = env.index_to_moveid[best_action_index.item()]
     s = str(best_action_mid).zfill(4)
     sr, sc, er, ec = map(int, s)
-    return ChessEngine.Move((sr, sc), (er, ec), gs.board)
+    enPassant = False
+    move = ChessEngine.Move((sr, sc), (er, ec), gs.board)
+    if move.pieceMoved[1] == 'p' and sc != ec and move.pieceCaptured == '--':
+        enPassant = True
+    return ChessEngine.Move((sr, sc), (er, ec), gs.board, enPassant)
