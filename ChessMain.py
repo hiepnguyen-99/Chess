@@ -35,8 +35,6 @@ def main():
     screen = p.display.set_mode((WIDTH, HEIGHT))  # Hiển thị cửa số có kích thước WxH
     clock = p.time.Clock()
     screen.fill(p.Color("white"))  # Vẽ cửa sổ màu trắng
-    gs = ChessEngine.GameState()
-    validMoves = gs.getValidMoves()
     moveMade = False
     animate = False
     loadImages()
@@ -48,6 +46,7 @@ def main():
     choosePP = False
     mousePressed = False
     buttonPressed = None
+    exitGame = False
 
     buttons = [
         {
@@ -105,180 +104,204 @@ def main():
         }
     ]
 
-    while choosePlayer or onePlayer:
-        # Vẽ bàn cờ
-        drawBoard(screen)
-        drawAlphabetNumber(screen)
-        drawPieces(screen, gs.board)
+    while not exitGame:
+        gs = ChessEngine.GameState()
+        validMoves = gs.getValidMoves()
+        keyR = False
+        while choosePlayer or onePlayer:
+            # Vẽ bàn cờ
+            drawBoard(screen)
+            drawAlphabetNumber(screen)
+            drawPieces(screen, gs.board)
 
-        # Tạo mảng rỗng
-        ranges = []
-        if onePlayer: # Nếu onePlayer = True thì mảng có 2 phần tử [4,5]
-            ranges = range(3, 5)
-        else:
-            ranges = range(3)
+            # Tạo mảng rỗng
+            ranges = []
+            if onePlayer: # Nếu onePlayer = True thì mảng có 2 phần tử [4,5]
+                ranges = range(3, 5)
+            else:
+                ranges = range(3)
 
-        # Vẽ các nút với các chỉ số trong mảng
-        for i in ranges:
-            button = buttons[i]
-            drawButton(screen, button['rect'], button['text'], button['textColor'], button['buttonColor'], button['borderColor'])
-        
-        # Thay đổi nút khi nút được nhất (buttonPressed)
-        if buttonPressed is not None:
-            drawButtonDown(screen, buttonPressed['rect'], buttonPressed['text'], buttonPressed['textColorDown'], buttonPressed['buttonColorDown'], buttonPressed['borderColor'])
-        
-        # Cập nhật giao diện
-        p.display.flip()
+            # Vẽ các nút với các chỉ số trong mảng
+            for i in ranges:
+                button = buttons[i]
+                drawButton(screen, button['rect'], button['text'], button['textColor'], button['buttonColor'], button['borderColor'])
+            
+            # Thay đổi nút khi nút được nhất (buttonPressed)
+            if buttonPressed is not None:
+                drawButtonDown(screen, buttonPressed['rect'], buttonPressed['text'], buttonPressed['textColorDown'], buttonPressed['buttonColorDown'], buttonPressed['borderColor'])
+            
+            # Cập nhật giao diện
+            p.display.flip()
 
-        # Xử lý chuột
-        for e in p.event.get():
-            if e.type == p.QUIT:
-                choosePlayer = False
-                onePlayer = False
-            elif e.type == p.MOUSEBUTTONDOWN:
-                for i in ranges:
-                    button = buttons[i]
-                    # Nếu vị trí chuột bấm xuống nằm trong nút
-                    if button['rect'].collidepoint(e.pos):
-                        buttonPressed = button
-                        mousePressed = True
-            elif e.type == p.MOUSEBUTTONUP:
-                for i in ranges:
-                    button = buttons[i]
-                    # Nếu vị trí nhấc chuột nằm trong nút
-                    if mousePressed and button['rect'].collidepoint(e.pos):
-                        for key, value in button['action'].items():
-                            if key in globals():
-                                # Cập nhật biến toàn cục trong button['action']
-                                globals()[key] = value
-                buttonPressed = None
-                mousePressed = False
+            # Xử lý chuột
+            for e in p.event.get():
+                if e.type == p.QUIT:
+                    choosePlayer = False
+                    onePlayer = False
+                    exitGame = True
+                elif e.type == p.MOUSEBUTTONDOWN:
+                    for i in ranges:
+                        button = buttons[i]
+                        # Nếu vị trí chuột bấm xuống nằm trong nút
+                        if button['rect'].collidepoint(e.pos):
+                            buttonPressed = button
+                            mousePressed = True
+                elif e.type == p.MOUSEBUTTONUP:
+                    for i in ranges:
+                        button = buttons[i]
+                        # Nếu vị trí nhấc chuột nằm trong nút
+                        if mousePressed and button['rect'].collidepoint(e.pos):
+                            for key, value in button['action'].items():
+                                if key in globals():
+                                    # Cập nhật biến toàn cục trong button['action']
+                                    globals()[key] = value
+                    buttonPressed = None
+                    mousePressed = False
 
-    while running:
-        humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
-        for e in p.event.get():
-            if e.type == p.QUIT:
-                running = False
-                # Xử lý chuột
-            elif e.type == p.MOUSEBUTTONDOWN:
-                if not gameOver and humanTurn:
-                    # Lấy ra tạo độ (x,y) của chuột
-                    location = p.mouse.get_pos()
-                    col = location[0] // SQ_SIZE
-                    row = location[1] // SQ_SIZE
-                    # Nếu chọn cùng 1 ô
-                    if sqSelected == (row, col):
-                        # Bỏ chọn
+        if exitGame:
+            break
+
+        while running and not exitGame:
+            humanTurn = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
+            for e in p.event.get():
+                if e.type == p.QUIT:
+                    running = False
+                    exitGame = True
+                    # Xử lý chuột
+                elif e.type == p.MOUSEBUTTONDOWN:
+                    if not gameOver and humanTurn:
+                        # Lấy ra tạo độ (x,y) của chuột
+                        location = p.mouse.get_pos()
+                        col = location[0] // SQ_SIZE
+                        row = location[1] // SQ_SIZE
+                        # Nếu chọn cùng 1 ô
+                        if sqSelected == (row, col):
+                            # Bỏ chọn
+                            sqSelected = ()
+                            # Xóa danh sách
+                            playerClicks = []
+                        else:
+                            sqSelected = (row, col)
+                            playerClicks.append(sqSelected)
+
+                        if len(playerClicks) == 2:
+                            # Tạo đối tượng move có lớp Move(điểm đầu, điểm cuối, bàn cờ)
+                            move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
+                            for i in range(len(validMoves)):
+                                if move == validMoves[i]:
+                                    if not validMoves[i].pawnPromotion:
+                                        gs.makeMove(validMoves[i])
+                                    else:
+                                        choosePP = True
+                                        while choosePP:
+                                            drawPromotionOptions(screen, validMoves[i])
+                                            for e in p.event.get():
+                                                if e.type == p.MOUSEBUTTONDOWN:
+                                                    # Xác định quân cờ được chọn
+                                                    location = p.mouse.get_pos()
+                                                    c = location[0] // SQ_SIZE
+                                                    r = location[1] // SQ_SIZE
+                                                    pP = ['Q', 'R', 'B', 'N', 'Q', 'R', 'B', 'N']
+                                                    if validMoves[i].pieceMoved == 'wp' and \
+                                                            0 <= r < 4 and c == validMoves[i].endCol:
+                                                        validMoves[i].promotedPiece = 'w' + pP[r]
+                                                        gs.makeMove(validMoves[i])
+                                                    elif validMoves[i].pieceMoved == 'bp' and \
+                                                            4 <= r < 8 and c == validMoves[i].endCol:
+                                                        validMoves[i].promotedPiece = 'b' + pP[r]
+                                                        gs.makeMove(validMoves[i])
+                                                    choosePP = False
+                                    moveMade = True
+                                    animate = True
+                                    sqSelected = ()
+                                    playerClicks = []
+                            if not moveMade:
+                                playerClicks = [sqSelected]
+                # Xử lý phím
+                elif e.type == p.KEYDOWN:
+                    # Hoàn tác nếu phím 'z' được nhấn
+                    if e.key == p.K_z:
+                        gs.undoMove()
                         sqSelected = ()
-                        # Xóa danh sách
                         playerClicks = []
-                    else:
-                        sqSelected = (row, col)
-                        playerClicks.append(sqSelected)
+                        moveMade = True
+                        animate = False
+                        gameOver = False
 
-                    if len(playerClicks) == 2:
-                        # Tạo đối tượng move có lớp Move(điểm đầu, điểm cuối, bàn cờ)
-                        move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                        for i in range(len(validMoves)):
-                            if move == validMoves[i]:
-                                if not validMoves[i].pawnPromotion:
-                                    gs.makeMove(validMoves[i])
-                                else:
-                                    choosePP = True
-                                    while choosePP:
-                                        drawPromotionOptions(screen, validMoves[i])
-                                        for e in p.event.get():
-                                            if e.type == p.MOUSEBUTTONDOWN:
-                                                # Xác định quân cờ được chọn
-                                                location = p.mouse.get_pos()
-                                                c = location[0] // SQ_SIZE
-                                                r = location[1] // SQ_SIZE
-                                                pP = ['Q', 'R', 'B', 'N', 'Q', 'R', 'B', 'N']
-                                                if validMoves[i].pieceMoved == 'wp' and \
-                                                        0 <= r < 4 and c == validMoves[i].endCol:
-                                                    validMoves[i].promotedPiece = 'w' + pP[r]
-                                                    gs.makeMove(validMoves[i])
-                                                elif validMoves[i].pieceMoved == 'bp' and \
-                                                        4 <= r < 8 and c == validMoves[i].endCol:
-                                                    validMoves[i].promotedPiece = 'b' + pP[r]
-                                                    gs.makeMove(validMoves[i])
-                                                choosePP = False
-                                moveMade = True
-                                animate = True
-                                sqSelected = ()
-                                playerClicks = []
-                        if not moveMade:
-                            playerClicks = [sqSelected]
-            # Xử lý phím
-            elif e.type == p.KEYDOWN:
-                # Hoàn tác nếu phím 'z' được nhấn
-                if e.key == p.K_z:
-                    gs.undoMove()
-                    sqSelected = ()
-                    playerClicks = []
-                    moveMade = True
-                    animate = False
-                    gameOver = False
+                    # Cài lại bàn cờ khi ấn 'r'
+                    if e.key == p.K_r:
+                        gs = ChessEngine.GameState()
+                        validMoves = gs.getValidMoves()
+                        sqSelected = ()
+                        playerClicks = []
+                        moveMade = False
+                        animate = False
+                        gameOver = False
+                        keyR = True
 
-                # Cài lại bàn cờ khi ấn 'r'
-                if e.key == p.K_r:
-                    gs = ChessEngine.GameState()
-                    validMoves = gs.getValidMoves()
-                    sqSelected = ()
-                    playerClicks = []
-                    moveMade = False
-                    animate = False
-                    gameOver = False
+                    if e.key == p.K_ESCAPE:
+                        running = False      
+                        choosePlayer = True 
+                        onePlayer = False  
+                        sqSelected = ()
+                        playerClicks = []
+                        gameOver = False
 
-        if not gameOver and not humanTurn:
-            AIMove = None
-            AIplay = Minimax and DQN
-            if AIplay:
-                if gs.whiteToMove and Minimax:
-                    if Evaluate.check_mid_game(gs):
-                        SmartMoveFinder.DEPTH = 4
-                    else:
-                        SmartMoveFinder.DEPTH = 3
-                    AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
-                    if AIMove is None:
-                        AIMove = SmartMoveFinder.findRandomMove(validMoves)
-            else:
-                if not gs.whiteToMove and Minimax:
-                    if Evaluate.check_mid_game(gs):
-                        SmartMoveFinder.DEPTH = 4
-                    else:
-                        SmartMoveFinder.DEPTH = 3
-                    AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
-                    if AIMove is None:
-                        AIMove = SmartMoveFinder.findRandomMove(validMoves)
+            if keyR:
+                break
 
-            if not gs.whiteToMove and DQN:
-                AIMove = RL.Move.BestRLMove(gs)
+            if not running or exitGame:
+                break
 
-            gs.makeMove(AIMove)
-            moveMade = True
-            animate = True            
+            if not gameOver and not humanTurn:
+                AIMove = None
+                AIplay = Minimax and DQN
+                if AIplay:
+                    if gs.whiteToMove and Minimax:
+                        if Evaluate.check_mid_game(gs):
+                            SmartMoveFinder.DEPTH = 4
+                        else:
+                            SmartMoveFinder.DEPTH = 3
+                        AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
+                        if AIMove is None:
+                            AIMove = SmartMoveFinder.findRandomMove(validMoves)
+                else:
+                    if not gs.whiteToMove and Minimax:
+                        if Evaluate.check_mid_game(gs):
+                            SmartMoveFinder.DEPTH = 4
+                        else:
+                            SmartMoveFinder.DEPTH = 3
+                        AIMove = SmartMoveFinder.findBestMinimaxMove(gs, validMoves)
+                        if AIMove is None:
+                            AIMove = SmartMoveFinder.findRandomMove(validMoves)
 
-        if moveMade:
-            if animate:
-                animateMove(gs.moveLog[-1], screen, gs, clock)
-            validMoves = gs.getValidMoves()
-            moveMade = False
-            animate = False
+                if not gs.whiteToMove and DQN:
+                    AIMove = RL.Move.BestRLMove(gs)
 
-        drawGameState(screen, gs, validMoves, sqSelected)
+                gs.makeMove(AIMove)
+                moveMade = True
+                animate = True            
 
-        if gs.checkMate:
-            gameOver = True
-            if gs.whiteToMove:
-                drawText(screen, 'Black win.', '#363636')
-            else:
-                drawText(screen, 'White win.', 'white')
-        elif gs.staleMate:
-            gameOver = True
-            drawText(screen, 'Draw.', '#A9A9A9')
-        clock.tick(MAX_FPS)
-        p.display.flip()
+            if moveMade:
+                if animate:
+                    animateMove(gs.moveLog[-1], screen, gs, clock)
+                validMoves = gs.getValidMoves()
+                moveMade = False
+                animate = False
+
+            drawGameState(screen, gs, validMoves, sqSelected)
+
+            if gs.checkMate:
+                gameOver = True
+                if gs.whiteToMove:
+                    drawText(screen, 'Black win.', '#363636')
+                else:
+                    drawText(screen, 'White win.', 'white')
+            elif gs.staleMate:
+                gameOver = True
+                drawText(screen, 'Draw.', '#A9A9A9')
+            clock.tick(MAX_FPS)
+            p.display.flip()
 
 
 def drawButtonDown(screen, rect, text, textColorDown, buttonColorDown, borderColor):
